@@ -4,9 +4,10 @@ In this example, we will cover following things.
 - Custom Defined Validation
 - Reusing the Custom Validations for multiple classes
 - Custom Validations with Group Sequence
-- Control Advice Exception Class
 - Response Object
-## Basic Validation
+- Control Advice Exception Class
+
+## Basic Validations
 Basic Validations like `@NotEmpty` , `@Size` , `@NotNull` etc.
 ```java
 @NotEmpty(message = "{account.name.notempty}",groups = {First.class})
@@ -22,7 +23,7 @@ private BigDecimal amount;
 ```
  
 ## Defined Custom Validation
-Created one Custom Validation called `@UniqueValue`, it accepts two parameters (`methodName` & `className`) . 
+Created one Custom Validator called `@UniqueValue`, it accepts two parameters (`methodName` & `className`) . 
 ```java
 @UniqueValue(
 methodName = "findByAccountName",
@@ -44,9 +45,9 @@ public @interface UniqueValue {
     String className();
 }
 ```
-### Implementation of `@UniqueValue`
+### Implementation of `@UniqueValue` validator class
   ```java
-public class UniqueValueValidator implements ConstraintValidator<UniqueValue, Object>{
+  public class UniqueValueValidator implements ConstraintValidator<UniqueValue, Object>{
     private String className;
     private String methodName;
 
@@ -56,15 +57,107 @@ public class UniqueValueValidator implements ConstraintValidator<UniqueValue, Ob
 		this.className = unique.className();
 	}
 	
-    @Override
+@Override
 	public boolean isValid(Object value, ConstraintValidatorContext context) {
 	 //1 Check the Object type as per requirement
      //2 using java reflection call the service and check value exists or not	
 	}
   }
   ```
-First validator creates object of service class then calls the given method and return db values.
+ First validator creates object of service class then calls the given method and return db values.
 After that validator check size is empty or not. It size is not empty then validator should return true otherwise false.
-  
+We can reuse the same validator for other object by passing different class and method
+```java
+@UniqueValue(
+methodName = "findByUserName",
+className  = "com.tech.mkblogs.user.service.UserService",
+message    = "{user.username.alreadyexists}",
+groups     = Default.class
+)
+ ```
+## Reuse Custom Validation
+```java
+@UniqueValue(
+methodName = "<<methodName>>",
+className  = "<<className>>",
+message    = "<<messagee>>",
+groups     = <<groupname if required>>
+)
+```
+## Group Sequence
+By default, constraints are evaluated in no particular order, regardless of which groups they belong to. In some situations, however, it is useful to control the order constraints are evaluated.
+In order to implement custom validation order we just need to define an interface and annotate it with `@GroupSequence`, defining the order in which the groups have to be validated. If at least one constraint fails in a sequenced group none of the constraints of the following groups in the sequence get validated.
 
+`@GroupSequence` is a class level annotation
+```java
+@GroupSequence({First.class,Second.class,AccountDTO.class})
+```
+And flow charts like this: 
+```mermaid
+graph TD
 
+A[First.class]  --> B{validation of the group}
+
+B -->|No Validation Messages| C[Second.class]
+B -->|Validation Failed| D((STOP - Send error messages to UI))
+
+C -->  E{validation of the group}
+
+E -->|No Validation Messages| G[Third.class]
+E -->|Validation Failed| F((STOP - Send error messages to UI))
+
+G --> H{validation of the group}
+
+H -->|No Validation Messages| J[AccountDTO.class]
+H -->|Validation Failed| I((STOP - Send error messages to UI))
+
+J --> K{validation of the group}
+K -->|No Validation Messages| M[Success]
+K -->|Validation Failed| L((STOP - Send error messages to UI))
+```
+## Response Object
+```java
+public class ResponseDTO <S,E> {
+   private Boolean isError;
+   private S successObject;
+   private E errorObject;	
+}
+```
+## Exception Handling
+A controller advice allows you to use exactly the same exception handling techniques but apply them across the whole application, not just to an individual controller. You can think of them as an annotation driven interceptor.
+
+```java
+@ControllerAdvice
+public class RestExceptionHandler extends ResponseEntityExceptionHandler {
+//define all exception classes here
+//sample code
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(
+            MethodArgumentNotValidException ex,
+            HttpHeaders headers,
+            HttpStatus status,
+            WebRequest request) {
+        
+    	ResponseDTO<Object, List<ErrorObject>> responseDTO = new ResponseDTO<>();
+    	responseDTO.setIsError(true);
+    	List<ErrorObject> errorList = new ArrayList<ErrorObject>();
+        
+        if(ex.getBindingResult().hasGlobalErrors()) {        	
+        	List<ObjectError> list = ex.getBindingResult().getGlobalErrors();
+        	errorList.addAll(list.stream()
+        					.map(error -> ErrorObject.of(error.getObjectName(), error.getObjectName(), error.getDefaultMessage()))
+        					.collect(Collectors.toList()));
+        }else {
+        	if(ex.getBindingResult().hasErrors()) {
+        		List<FieldError> list = ex.getBindingResult().getFieldErrors();
+        		
+        		errorList.addAll(list.stream()
+    					.map(error -> ErrorObject.of(error.getField(), error.getObjectName(), error.getDefaultMessage()))
+    					.collect(Collectors.toList()));
+            }
+        }        
+        responseDTO.setErrorObject(errorList);
+        return ResponseEntity.ok().body(responseDTO);
+    }
+}
+```
