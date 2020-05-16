@@ -95,22 +95,15 @@ In order to implement custom validation order we just need to define an interfac
 And flow charts like this: 
 ```mermaid
 graph TD
-
 A[First.class]  --> B{validation of the group}
-
 B -->|No Validation Messages| C[Second.class]
 B -->|Validation Failed| D((STOP - Send error messages to UI))
-
 C -->  E{validation of the group}
-
 E -->|No Validation Messages| G[Third.class]
 E -->|Validation Failed| F((STOP - Send error messages to UI))
-
 G --> H{validation of the group}
-
 H -->|No Validation Messages| J[AccountDTO.class]
 H -->|Validation Failed| I((STOP - Send error messages to UI))
-
 J --> K{validation of the group}
 K -->|No Validation Messages| M[Success]
 K -->|Validation Failed| L((STOP - Send error messages to UI))
