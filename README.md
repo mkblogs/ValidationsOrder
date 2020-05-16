@@ -90,7 +90,7 @@ In order to implement custom validation order we just need to define an interfac
 
 `@GroupSequence` is a class level annotation
 ```java
-@GroupSequence({First.class,Second.class,AccountDTO.class})
+@GroupSequence({First.class,Second.class,Third.class,AccountDTO.class})
 ```
 And flow charts like this: 
 ```mermaid
