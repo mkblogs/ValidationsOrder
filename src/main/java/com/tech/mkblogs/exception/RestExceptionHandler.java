@@ -23,7 +23,6 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import com.tech.mkblogs.account.dto.AccountDTO;
 import com.tech.mkblogs.response.ErrorObject;
 import com.tech.mkblogs.response.ResponseDTO;
 
@@ -48,7 +47,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         error.setErrorField(parameterName);
         error.setErrorMsg(parameterName);
         
-        ResponseDTO<AccountDTO, List<ErrorObject>> responseDTO = new ResponseDTO<>();
+        ResponseDTO<Object, List<ErrorObject>> responseDTO = new ResponseDTO<>();
         List<ErrorObject> errorList = new ArrayList<>();
         errorList.add(error);
         responseDTO.setIsError(true);
@@ -63,7 +62,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
             HttpStatus status,
             WebRequest request) {
         
-    	ResponseDTO<AccountDTO, List<ErrorObject>> responseDTO = new ResponseDTO<>();
+    	ResponseDTO<Object, List<ErrorObject>> responseDTO = new ResponseDTO<>();
     	responseDTO.setIsError(true);
     	List<ErrorObject> errorList = new ArrayList<ErrorObject>();
         
@@ -99,7 +98,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
          error.setErrorField(errorMsg);
          error.setErrorMsg(errorMsg);
          
-         ResponseDTO<AccountDTO, List<ErrorObject>> responseDTO = new ResponseDTO<>();
+         ResponseDTO<Object, List<ErrorObject>> responseDTO = new ResponseDTO<>();
          List<ErrorObject> errorList = new ArrayList<>();
          errorList.add(error);
          responseDTO.setIsError(true);
@@ -121,7 +120,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
          error.setErrorField(errorMsg);
          error.setErrorMsg(errorMsg);
          
-         ResponseDTO<AccountDTO, List<ErrorObject>> responseDTO = new ResponseDTO<>();
+         ResponseDTO<Object, List<ErrorObject>> responseDTO = new ResponseDTO<>();
          List<ErrorObject> errorList = new ArrayList<>();
          errorList.add(error);
          responseDTO.setIsError(true);
@@ -141,7 +140,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
          error.setErrorField(errorMsg);
          error.setErrorMsg(errorMsg);
          
-         ResponseDTO<AccountDTO, List<ErrorObject>> responseDTO = new ResponseDTO<>();
+         ResponseDTO<Object, List<ErrorObject>> responseDTO = new ResponseDTO<>();
          List<ErrorObject> errorList = new ArrayList<>();
          errorList.add(error);
          responseDTO.setIsError(true);
@@ -162,7 +161,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         error.setErrorField(errorMsg);
         error.setErrorMsg(errorMsg);
         
-        ResponseDTO<AccountDTO, List<ErrorObject>> responseDTO = new ResponseDTO<>();
+        ResponseDTO<Object, List<ErrorObject>> responseDTO = new ResponseDTO<>();
         List<ErrorObject> errorList = new ArrayList<>();
         errorList.add(error);
         responseDTO.setIsError(true);
@@ -180,7 +179,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
          error.setErrorField(errorMsg);
          error.setErrorMsg(errorMsg);
          
-         ResponseDTO<AccountDTO, List<ErrorObject>> responseDTO = new ResponseDTO<>();
+         ResponseDTO<Object, List<ErrorObject>> responseDTO = new ResponseDTO<>();
          List<ErrorObject> errorList = new ArrayList<>();
          errorList.add(error);
          responseDTO.setIsError(true);
@@ -203,7 +202,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
          error.setErrorField(errorMsg);
          error.setErrorMsg(errorMsg);
          
-         ResponseDTO<AccountDTO, List<ErrorObject>> responseDTO = new ResponseDTO<>();
+         ResponseDTO<Object, List<ErrorObject>> responseDTO = new ResponseDTO<>();
          List<ErrorObject> errorList = new ArrayList<>();
          errorList.add(error);
          responseDTO.setIsError(true);
@@ -212,7 +211,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return buildResponseEntity(responseDTO);
     }
 
-    private ResponseEntity<Object> buildResponseEntity(ResponseDTO<AccountDTO, List<ErrorObject>> responseDTO) {
+    private ResponseEntity<Object> buildResponseEntity(ResponseDTO<Object, List<ErrorObject>> responseDTO) {
         return ResponseEntity.ok().body(responseDTO);
     }
 }

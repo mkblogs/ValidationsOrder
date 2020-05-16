@@ -11,6 +11,4 @@ public class ResponseDTO<S,E> {
 	private S successObject;
 	private E errorObject;
 	
-	
-	
 }
