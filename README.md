@@ -145,14 +145,14 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         if(ex.getBindingResult().hasGlobalErrors()) {        	
         	List<ObjectError> list = ex.getBindingResult().getGlobalErrors();
         	errorList.addAll(list.stream()
-        			.map(error -> ErrorObject.of(error.getObjectName(), error.getObjectName(), error.getDefaultMessage()))
-        			.collect(Collectors.toList()));
+        		.map(error -> ErrorObject.of(error.getObjectName(), error.getObjectName(), error.getDefaultMessage()))
+        		.collect(Collectors.toList()));
         }else {
         	if(ex.getBindingResult().hasErrors()) {
-        		List<FieldError> list = ex.getBindingResult().getFieldErrors();        		
-        		errorList.addAll(list.stream()
-    				.map(error -> ErrorObject.of(error.getField(), error.getObjectName(), error.getDefaultMessage()))
-    				.collect(Collectors.toList()));
+        	List<FieldError> list = ex.getBindingResult().getFieldErrors();        		
+        	errorList.addAll(list.stream()
+    			.map(error -> ErrorObject.of(error.getField(), error.getObjectName(), error.getDefaultMessage()))
+    			.collect(Collectors.toList()));
             }
         }        
         responseDTO.setErrorObject(errorList);
